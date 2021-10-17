@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="inherit_sale_order_portal_template" name="Sale Order Portal" inherit_id="sale.sale_order_portal_template" priority="20">
+        <xpath expr="//t[@t-set='entries']" position="replace">
+        	<t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <li class="list-group-item flex-grow-1">
+                                <t t-set="orders" t-value="request.env['sale.order'].sudo().search([('partner_id', '=', sale_order.partner_id.id), ('state', '=', 'sale')])"/>
+
+                                <t t-set="orders_amount_residual" t-value="sale_order.amount_total + sum(orders.filtered(lambda l: not l.invoice_ids).mapped('amount_total')) + 
+                                    sum(orders.filtered(lambda l: l.invoice_ids).invoice_ids.filtered(lambda x: x.amount_residual != 0).mapped('amount_residual'))"/>
+
+                                <div t-if="sale_order.partner_id.client_type != 'cash' and sale_order.has_to_be_signed(True) and (orders_amount_residual &gt; sale_order.partner_id.credit_limit) and not request.env.user.has_group('wt_ctmetals.group_is_eligible_to_confirm_so')" role="button" class="btn btn-primary btn-block mb8 credit_limit_error" data-toggle="" data-target="" href="#">
+                                    <i class="fa fa-check"/><t t-if="sale_order.has_to_be_paid(True)"> Sign &amp; Pay</t><t t-else=""> Accept &amp; Sign</t>
+                                </div>
+
+                                <a t-elif="sale_order.has_to_be_signed(True)" role="button" class="btn btn-primary btn-block mb8" data-toggle="modal" data-target="#modalaccept" href="#">
+                                    <i class="fa fa-check"/><t t-if="sale_order.has_to_be_paid(True)"> Sign &amp; Pay</t><t t-else=""> Accept &amp; Sign</t>
+                                </a>
+
+
+                                <a t-elif="sale_order.has_to_be_paid(True)" role="button" id="o_sale_portal_paynow" data-toggle="modal" data-target="#modalaccept" href="#" t-att-class="'btn-block mb8 %s' % ('btn btn-light' if sale_order.transaction_ids else 'btn btn-primary')" >
+                                    <i class="fa fa-check"/> <t t-if="not sale_order.signature">Accept &amp; Pay</t><t t-else="">Pay Now</t>
+                                </a>
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_download_btn" t-att-href="sale_order.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Download</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print" t-att-href="sale_order.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Print</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </li>
+
+                            <t t-if="not sale_order.is_expired and sale_order.state in ['draft', 'sent']">
+                                <li t-if="sale_order.validity_date" class="list-group-item">
+                                    <small><b class="text-muted">This offer expires on</b></small>
+                                    <div t-field="sale_order.validity_date"></div>
+                                </li>
+                                <li t-if="sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01" class="list-group-item flex-grow-1">
+                                    <small><b class="text-muted">Your advantage</b></small>
+                                    <small>
+                                        <b t-field="sale_order.amount_undiscounted"
+                                            t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
+                                            style="text-decoration: line-through"
+                                            class="d-block mt-1"
+                                            data-id="amount_undiscounted" />
+                                    </small>
+                                    <t t-if="sale_order.amount_untaxed == sale_order.amount_total">
+                                        <h4 t-field="sale_order.amount_total" class="text-success" data-id="total_amount"/>
+                                    </t>
+                                    <t t-else="">
+                                        <h4 t-field="sale_order.amount_untaxed" class="text-success mb-0" data-id="total_untaxed"/>
+                                        <small>(<span t-field="sale_order.amount_total" data-id="total_amount"/> Incl. tax)</small>
+                                    </t>
+                                </li>
+                            </t>
+
+                            <li t-if="sale_order.user_id" class="list-group-item flex-grow-1">
+                                <div class="small mb-1"><strong class="text-muted">Salesperson</strong></div>
+                                <div class="row flex-nowrap">
+                                    <div class="col flex-grow-0 pr-2">
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="sale_order.user_id.image_1024" t-att-src="image_data_uri(sale_order.user_id.image_1024)" alt="Contact"/>
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="not sale_order.user_id.image_1024" src="/web/static/src/img/placeholder.png" alt="Contact"/>
+                                    </div>
+                                    <div class="col pl-0" style="min-width: 150px">
+                                        <span t-field="sale_order.user_id" t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                        <a href="#discussion" class="small"><i class="fa fa-comment"></i> Send message</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+            </t>
+
+       </xpath>
+   </template>
+</odoo>

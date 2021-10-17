@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="assets_backend" name="Backend Assets" inherit_id="web.assets_backend">
+		<xpath expr="//link[last()]" position="after">
+			<link rel="stylesheet" type="text/scss" href="/wt_theme_base/static/src/scss/custom.scss"/>
+			<link rel="stylesheet" type="text/scss" href="/wt_theme_base/static/src/scss/apps.scss"/>
+		</xpath>
+		<xpath expr="//script[last()]" position="after">
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/apps.js"></script>
+
+
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/menu.js"></script>
+	    	
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/libs/scrollbar.js"></script>
+
+	    	
+
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/appsmenu.js"></script>
+	    	
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/custom.js"></script>
+
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/actions.js" />
+
+	    	<script type="text/javascript" src="/wt_theme_base/static/src/js/navbar.js"></script>
+	    </xpath>
+	</template>
+
+	<template id="_assets_utils" name="Mixins" inherit_id="web._assets_utils" priority="15">
+		<xpath expr="//link[last()]" position="after">
+            <link rel="stylesheet" type="text/scss" href="/wt_theme_base/static/src/scss/mixins.scss"/>
+            
+		</xpath>
+    </template>
+
+    <template id="assets_common" name="wt_theme assets common" inherit_id="web.assets_common">
+        <xpath expr="//link[@href='/web/static/src/scss/ui_extra.scss']" position="replace">
+            <link rel="stylesheet" type="text/scss" href="/wt_theme_base/static/src/scss/login_bg.scss"/>
+        </xpath>
+        <xpath expr="//link[last()]" position="after">
+            <script type="text/javascript" src="/wt_theme_base/static/src/js/core/search.js"></script>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,23 @@
+<templates id="template" xml:space="preserve">
+    <t t-name="wt_ctmetals.wt_signature">
+        <!-- <form id="o_portal_sign_accept" method="POST"> -->
+            <!-- <input type="hidden" name="csrf_token" t-att-value="widget.options.csrf_token"/> -->
+            <div id="o_portal_sign_accept">
+            <div class="card mb0" id="o_portal_sign_draw">
+                <div class="card-header">
+                    <div class="float-right">
+                        <a role="button" id="o_portal_sign_clear" class="btn btn-sm">Clear</a>
+                    </div>
+                    <strong class="required_wt_cl_main_dp">Signature</strong>
+                </div>
+                <div id="o_portal_signature" class="card-body" style="padding: 0"/>
+            </div>
+            
+            <div class="mt16 mb16 text-left clearfix">
+              <t t-set='defaultSignLabel'>Validate</t>
+              <button type="submit" class="btn btn-primary o_portal_sign_submit"><t t-esc="widget.options.signLabel or defaultSignLabel"/></button>
+            </div>
+        </div>
+        <!-- </form> -->
+    </t>
+</templates>

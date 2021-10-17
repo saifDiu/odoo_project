@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_dms_charges">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div id="informations">
+                            <h3>Domestic Reserve Charges:.
+                            </h3>
+                        </div>
+                        <table class="table table-sm o_main_table" name="reverce_charge_table">
+                            <thead>
+                                <tr>
+                                    <t t-set="colspan" t-value="6"/>
+                                    <th class="text-center">
+                                        <span>Partner</span>
+                                    </th>
+                                    <th class="text-center">
+                                        <span>Invoice</span>
+                                    </th>
+                                    <th class="text-center">
+                                        <span>Invoice Date</span>
+                                    </th>
+                                    <th class="text-right">
+                                        <span>DMC VAT</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <t t-set="total_amount" t-value="0.00"/>
+                            <tbody class="invoice_tbody">
+                                <t t-foreach="docs" t-as="order">
+                                    <tr>
+                                        <td class="text-center">
+                                            <span t-field="order.partner_id.name"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="order.inv_id.name"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="order.date"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="order.charge_amount"/>
+                                        </td>
+                                        <t t-set="total_amount" t-value="total_amount + order.charge_amount"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td>Total DMS Amount:</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right"><span t-esc="total_amount"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
+
+

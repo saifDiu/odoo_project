@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="web_layout_inherit" inherit_id="web.layout">
+        <xpath expr="//title" position="replace">
+        	<title t-esc="title or request.env['res.config.settings'].get_debranding_settings()['r_title']"/>
+        </xpath>
+        <xpath expr="//link[@rel='shortcut icon']" position="replace">
+            <link  rel="shortcut icon"  type="image/x-icon" t-attf-href="data:image/png;base64,#{request.env['res.config.settings'].get_debranding_settings()['wt_favicon']}"/>
+        </xpath>
+    </template>
+    <template id="assets_backend_inherit" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+        	<script type="text/javascript" src="/wt_backend_debrand/static/src/js/avatar.js"></script>
+        	<script type="text/javascript" src="/wt_backend_debrand/static/src/js/custom.js"></script>
+        </xpath>
+    </template>
+</odoo>

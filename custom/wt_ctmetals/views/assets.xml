@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_frontend" inherit_id="website.assets_frontend" name="Website assets">
+        <xpath expr="//link[last()]" position="after">
+            <link rel="stylesheet" type="text/scss" href="/wt_ctmetals/static/src/scss/custom.scss" />
+            <link rel="stylesheet" type="text/scss" href="/wt_ctmetals/static/src/scss/page_not_found.css" />
+        </xpath>
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/wt_ctmetals/static/src/js/webcam1.js"/>
+            <script type="text/javascript" src="/wt_ctmetals/static/src/js/wt_signature.js"/>
+            <script type="text/javascript" src="/wt_ctmetals/static/src/js/webcam.js"/>
+            <script type="text/javascript" src="/wt_ctmetals/static/src/js/delivery_popover.js"/>
+        </xpath>
+    </template>
+</odoo>

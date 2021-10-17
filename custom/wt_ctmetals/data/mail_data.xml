@@ -1,0 +1,124 @@
+<?xml version="1.0" ?>
+<data noupdate="0">
+    <delete model="ir.ui.menu" id="purchase.menu_purchase_rfq"/>
+    <!-- <template id="mail_notification_paynow_signature" inherit_id="mail.mail_notification_paynow"
+            name="Quotation: Sign and Pay mail Signature">
+            <xpath expr="//tr//tr//td//t//div[2]" position="replace">
+                <div t-if="record.env.user.sudo().signature" style="font-size: 13px;">
+                    <div t-raw="record.env.user.sudo().signature"/>
+                </div>
+            </xpath>
+
+            <xpath expr="//t[@t-esc='access_name']" position='replace'>
+                <t t-if="record._name == 'sale.order'">
+                    <t t-set="access_name">/ sign / pay quotation</t>
+                    <t t-esc='access_name'/>
+                </t>
+                <t t-else="">
+                    <t t-esc='access_name'/>
+                </t>
+            </xpath>
+
+        </template>
+
+        <template id="sale.mail_notification_paynow_online" inherit_id="mail.mail_notification_paynow"
+            name="Quotation: Sign and Pay mail notification template">
+            <xpath expr="//t[@t-set='access_name']" position="after">
+                <t t-if="record._name == 'sale.order'">
+                    <t t-set="is_transaction_pending" t-value="record.get_portal_last_transaction().state == 'pending'"/>
+                    <t t-if="record.has_to_be_signed(include_draft=True)">
+                        <t t-if="record.has_to_be_paid()" t-set="access_name">
+                            <t t-if="is_transaction_pending">/ sign / pay quotation</t>
+                            <t t-else="">/ sign / pay quotation</t>
+                        </t>
+                        <t t-else="" t-set="access_name">/ sign / pay quotation</t>
+                    </t>
+                    <t t-elif="record.has_to_be_paid(include_draft=True) and not is_transaction_pending">
+                        <t t-set="access_name">/ sign / pay quotation</t>
+                    </t>
+                    <t t-elif="record.state in ('draft', 'sent')">
+                        <t t-set="access_name">/ sign / pay quotation</t>
+                    </t>
+                </t>
+            </xpath>
+        </template>
+ -->
+        <record id="email_template_stock_picking" model="mail.template">
+            <field name="name">Delivery Note: Send by email</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="email_from">${(object.user_id.email_formatted or user.email_formatted) | safe}</field>
+            <field name="subject">${object.company_id.name} ${object.state in ('draft', 'sent') and (ctx.get('proforma') and 'Proforma' or 'Quotation') or 'Order'} (Ref ${object.name or 'n/a' })</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello,
+                        <br/><br/>
+                        Your Delivery for
+                            <strong>${object.name}</strong> has been succesfully delivered
+                            % if object.origin:
+                                (with reference: ${object.origin} )
+                            % endif
+                        <br/><br/>
+                        Do not hesitate to contact us if you have any questions.
+                        <br/>
+                    </p>
+                </div>
+            </field>
+           <field name="report_template" ref="wt_stock_picking_report.action_report_stockpicking"/>
+           <field name="report_name">${(object.name or '').replace('/','_')}</field>
+        </record>
+
+
+        <record id="email_template_pro_forma_sale" model="mail.template">
+            <field name="name">PRO-FORMA Invoice: Send by email</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="subject">${object.company_id.name} ${object.state in ('draft', 'sent') and (ctx.get('proforma') and 'Proforma' or 'Quotation') or 'Order'} (Ref ${object.name or 'n/a' })</field>
+            <field name="email_from">${(object.user_id.email_formatted or user.email_formatted) | safe}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        % set doc_name = 'quotation' if object.state in ('draft', 'sent') else 'order'
+                        Hello,
+                        <br/><br/>
+                        Your
+                        % if ctx.get('proforma'):
+                            Pro forma invoice for ${doc_name} <strong>${object.name}</strong>
+                            % if object.origin:
+                                (with reference: ${object.origin} )
+                            % endif
+                            amounting in <strong>${format_amount(object.amount_total, object.pricelist_id.currency_id)}</strong> is available.
+                        % else:
+                            ${doc_name} <strong>${object.name}</strong>
+                            % if object.origin:
+                                (with reference: ${object.origin} )
+                            % endif
+                            amounting in <strong>${format_amount(object.amount_total, object.pricelist_id.currency_id)}</strong> is ready for review.
+                        % endif
+                        <br/><br/>
+                        Do not hesitate to contact us if you have any questions.
+                        <br/>
+                    </p>
+                </div>
+            </field>
+            <field name="report_template" ref="sale.action_report_pro_forma_invoice"/>
+            <field name="report_name">${(object.name or '').replace('/','_')}</field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+
+        <!-- set default proforma template -->
+        <record id="default_proforma_template" model="ir.config_parameter">
+            <field name="key">wt_ctmetals.default_proforma_template</field>
+            <field name="value" ref="wt_ctmetals.email_template_pro_forma_sale"/>
+        </record>
+
+        <record id="menu_delivery" model="website.menu">
+            <field name="name">Delivery</field>
+            <field name="url">/delivery</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">20</field>
+            <field name="group_ids" eval="[(4, ref('wt_ctmetals.group_is_delivery_boy'))]"/>
+        </record>
+    </data>

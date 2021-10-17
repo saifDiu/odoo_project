@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+        <function model="ir.default" name="set" eval="('res.config.settings', 'r_title', 'WooERP')"/>
+        <function model="ir.default" name="set" eval="('res.config.settings', 'r_text', 'WooERP')"/>
+        <function model="ir.default" name="set_wt_favicon" eval="('res.config.settings', 'wt_favicon')"/>
+        <record id="base.main_company" model="res.company">
+            <field name="name">WooERP</field>
+        	<field name="favicon" model="res.company" eval="obj()._get_wt_default_favicon()"/>
+        </record>
+        <record id="base.partner_root" model="res.partner">
+            <field name="name">System</field>
+            <field name="email">root@example.com</field>
+            <field name="image_1920" type="base64" file="wt_backend_debrand/static/src/img/root_user.png"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+	<t t-name="HiddenInputFile" t-extend="HiddenInputFile">
+		<t t-jquery=".o_input_file" t-operation="replace">
+			<input type="file" class="o_input_file" name="ufile"
+                t-att="{'multiple': multi_upload ? 'multiple' : null, 'accept': widget.accepted_file_extensions || '*'}" id="ufile_file_upload_binary"/>
+		</t>
+	</t>
+	<div t-name="FieldBinaryFileUploader" t-extend="FieldBinaryFileUploader">
+		<t t-jquery="button.o_attach" t-operation="replace"/>
+		<t t-jquery="t[t-call='HiddenInputFile']" t-operation="replace">
+			<div class="image_upload_drag_and_drop"> 
+	            <label style="cursor: pointer;" for="ufile_file_upload_binary">
+	            <div class="h-100">
+	                <div class="dplay-tbl">
+	                    <div class="dplay-tbl-cell"> <i class="fa fa-cloud-upload"></i>
+	                        <h5><b>Choose Your File to Upload</b></h5>
+	                        <h6 class="mt-10 mb-70">Or Drop Your File Here</h6>
+	                    </div>
+	                </div>
+	            </div>
+	            <button class="btn btn-secondary o_attach" title="Attach"><span class="fa fa-paperclip" aria-label="Attach"/> <t t-esc="widget.string"/></button>
+	            <t t-call="HiddenInputFile">
+	                <t t-set="fileupload_id" t-value="widget.fileupload_id"/>
+	                <t t-set="fileupload_action" t-translation="off">/web/binary/upload_attachment</t>
+	                <t t-set="multi_upload" t-value="true"/>
+	                <input type="hidden" name="model" t-att-value="widget.model"/>
+	                <input type="hidden" name="id" value="0"/>
+	            </t>
+	            </label>
+        	</div>
+		</t>
+	</div>
+</templates>

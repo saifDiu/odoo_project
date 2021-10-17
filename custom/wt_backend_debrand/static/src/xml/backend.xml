@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+	<t t-extend="res_config_dev_tool">
+		<t t-jquery="#developer_tool" t-operation="replace"/>
+	</t>
+	<t t-extend="UserMenu.Actions">
+		<t t-jquery="a[data-menu='documentation']" t-operation="replace"/>
+		<t t-jquery="a[data-menu='support']" t-operation="replace"/>
+		<t t-jquery="a[data-menu='account']" t-operation="replace"/>
+		<t t-jquery="div.dropdown-divider" t-operation="replace"/>
+	</t>
+</templates>

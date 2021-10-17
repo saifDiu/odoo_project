@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_stockpicking_document">
+         <t t-call="web.external_layout">
+            <t t-set="o" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+           <t t-set="address">
+                    <strong>Billing Address:</strong>
+                        <div t-field="o.billinhg_partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+                </t>
+
+            <t t-set="information_block">
+                <strong>Shipping Address:</strong>
+                  <div t-field="o.order_id.partner_shipping_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+            </t>
+
+
+            <div class="page">
+                <br/>
+                    <h2>
+                        <span>Delivery</span>
+                        <span t-if="o.name != '/'" t-field="o.name"/>
+                    </h2>
+                <br/>
+
+                <div id="informations" class="row mt32 mb32">
+                        <div class="col-auto col-3 mw-100 mb-2" t-if="o.scheduled_date" name="scheduled_date">
+                            <strong>Schedule Date:</strong>
+                            <p class="m-0" t-field="o.scheduled_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" t-if="o.date_done" name="date_done">
+                            <strong>Effective Date:</strong>
+                            <p class="m-0" t-field="o.date_done" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" t-if="o.origin" name="origin">
+                            <strong>Source:</strong>
+                            <p class="m-0" t-field="o.origin"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" t-if="o.project_id_ct" name="project_id">
+                            <strong>Project:</strong>
+                            <p class="m-0" t-field="o.project_id_ct"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" t-if="o.customer_ref" name="customer_ref">
+                            <strong>Reference:</strong>
+                            <p class="m-0" t-field="o.customer_ref"/>
+                        </div>
+                    </div>
+
+
+                      <div id="imp_informations" class="row mt32 mb32">
+
+                         <div class="col-auto col-3 mw-100 mb-2" t-if="o.origin" name="origin">
+                            <strong>Site Contact:</strong>
+                            <p class="m-0" t-field="o.order_id.partner_shipping_id.name"/>
+                        </div>
+
+                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.mobile" name="contact_no">
+                            <strong>Mobile Number:</strong>
+                            <p class="m-0" t-field="o.partner_id.mobile"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="contact_12">
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="contact_1234">
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="contact_12345">
+                        </div>
+                    </div>
+
+                <table class="table table-sm o_main_table mt-4">
+                <thead style="display: table-row-group">
+                    <tr style="border:1px solid #dee2e6">
+                        <th name="th_quantity" class="text-left">Description</th>
+                        <!-- <th name="th_quantity" class="text-left">Details</th> -->
+                        <th name="th_description" class="text-right">Dispatched</th>
+                        <th name="th_priceunit" class="text-right">Remaining</th>
+                    </tr>
+                </thead>
+                <tbody class="sale_tbody">
+                    <t t-foreach="doc.sale_id.order_line" t-if="doc.sale_id" t-as="s_line"> 
+                        <tr>
+                            <td name="td_name" class="text-left" t-if="s_line.product_id">
+                                <span t-esc="s_line.product_id.name"/>
+                            </td>
+                            <t t-if="s_line.display_type == 'line_section'">
+                                <td name="td_section_line" colspan="99">
+                                    <span t-field="s_line.name"/>
+                                </td>
+                                <t t-set="current_section" t-value="s_line"/>
+                                <t t-set="current_subtotal" t-value="0"/>
+                            </t>
+                            <t t-if="s_line.display_type == 'line_note'">
+                                <td name="td_note_line" colspan="99">
+                                    <span t-field="s_line.name"/>
+                                </td>
+                            </t>
+                            <td name="td_quantity_done" class="text-right">
+                                <span t-esc="s_line.qty_delivered" t-if="s_line.product_id"/>
+                            </td>
+                            <td name="td_quantity_remain" class="text-right">
+                                <span t-esc="s_line.product_uom_qty - s_line.qty_delivered" t-if="s_line.product_id"/>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-if="doc.purchase_id" t-foreach="doc.purchase_id.order_line" t-as="p_line">
+                        
+                        <tr>
+                            <td name="td_name" class="text-left">
+                                <span t-esc="p_line.product_id.name" t-if="p_line.product_id"/>
+                                <span t-esc="p_line.name" t-else="else"/>
+                                <br/>
+                            </td>
+                            <td name="td_quantity_done" class="text-right">
+                                <span t-esc="p_line.qty_received" t-if="p_line.product_id"/>
+                            </td>
+                            <td name="td_quantity_remain" class="text-right">
+                                <span t-esc="p_line.product_uom_qty - p_line.qty_received" t-if="p_line.product_id"/>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-else="else" t-foreach="doc.move_ids_without_package" t-as="line">
+                        <tr>
+                            <td name="td_name" class="text-left">
+                                <span t-esc="line.product_id.name"/>
+                                <br/>
+                                <span t-field="o.note"/>
+                            </td>
+                            <td name="td_quantity_done" class="text-right">
+                                <span t-esc="line.qty_delivered"/>
+                            </td>
+                            <td name="td_quantity_remain" class="text-right">
+                                <span t-esc="line.product_uom_qty - line.qty_delivered"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+            <br/>
+
+            <div class="row" style="page-break-inside:avoid;">
+                <strong style="padding:5px;">Annotation</strong>
+                <div class="col-6">
+                    <fieldset class="border border-dark" style="height:110px;margin-top:-18px">
+                       <span t-esc="doc.annotation"/>
+                    </fieldset>
+                </div>
+
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Delivered By</strong>
+                        </div>
+                        <div class="col-6" style="border-bottom:1px solid">
+                            <span t-esc="doc.user_id.name"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Delivery date</strong>
+                        </div>
+                        <div class="col-6" style="border-bottom:1px solid">
+                            <span t-esc="datetime.date.today()"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Delivered Time</strong>
+                        </div>
+                        <div class="col-6" style="border-bottom:1px solid">
+                            <span t-esc="datetime.datetime.now().time().strftime('%H:%M:%S')"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>All goods received</strong>
+                        </div>
+                        <div class="col-6">
+                            <strong>Yes / No</strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Received by</strong>
+                        </div>
+                        <div class="col-6" style="border-bottom:1px solid">
+                            <span t-esc="doc.receive_by"/>
+                        </div>
+                    </div>
+                    <div class="row" style="page-break-inside:avoid;">
+                         <div class="col-6" style='margin-top:20px;'>
+                            <strong>Signature</strong>
+                        </div>
+                        <div class="col-6" style="border-bottom:1px solid; margin-top:20px;">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(doc.digital_signature)" style="width:65%; height:60px;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <div class="row" style="page-break-inside:avoid;margin-left:0px;padding-left:0px;width:100%;display:flex;float:left;">
+                        <div class="col-4">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(doc.image1)" style="padding:10px;display:flex;width:80%; height:150px;"/>
+                        </div>
+                        <div class="col-4">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(doc.image2)" style="padding:10px;display:flex;width:80%; height:150px;"/>
+                        </div>
+                        <div class="col-4">
+                            <img t-att-src="'data:image/png;base64,%s' % to_text(doc.image3)" style=";padding:10px;display:flex;width:80%; height:150px;"/>
+                        </div>
+                    </div>
+            <div class="mt-3">
+                <strong style="font-size:10px;float:left">
+                    The seller remains the owner of the goods until such time as all sums owed by the buyer to the seller are paid in their entirety.
+                </strong>
+            </div>
+        </div>
+        </t>
+    </template>
+
+    <template id="report_stockpicking">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="wt_stock_picking_report.report_stockpicking_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

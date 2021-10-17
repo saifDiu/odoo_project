@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_picking_form_view_extended" model="ir.ui.view">
+        <field name="name">stock.picking.form.view.extended</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="project_id_ct"/>
+            </xpath>
+            <xpath expr="//field[@name='location_dest_id']" position="after">
+                <field name="receive_by"/>
+                <field name="annotation"/>
+                <field name="digital_signature" widget="signature"/>
+            </xpath>
+            <xpath expr="//page[@name='note']" position="after">
+                <page string="Delivery Images" name="images" attrs="{'invisible': [('picking_type_code','!=', 'outgoing')]}">
+                    <div class="float-left">
+                        <field name="image1" widget="image" class="oe_avatar oe_inline"/>
+                        <field name="image2" widget="image" class="oe_avatar oe_inline"/>
+                        <field name="image3" widget="image" class="oe_avatar oe_inline"/>
+                    </div>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="user_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

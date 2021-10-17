@@ -1,0 +1,36 @@
+.image_upload_drag_and_drop{
+    width: 95%;
+    height: 204px;
+    border: 1px dashed #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    position: relative;
+    text-align: center;
+    background: #f8f8f9;
+    color: #666;
+    overflow: hidden;
+}
+.image_upload_drag_and_drop > label{
+        width: 100%;
+        height: 100%;
+}
+.image_upload_drag_and_drop > label .dplay-tbl-cell i.fa-cloud-upload{
+        font-size: 60px;
+    padding-top: 42px;
+}
+.image_upload_drag_and_drop .image-upload i {
+    font-size: 6em;
+    color: #ccc
+}
+
+.image_upload_drag_and_drop input.o_input_file{
+    cursor: pointer;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block !important;
+}

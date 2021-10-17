@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <template id="webclient_login" inherit_id="web.login_layout">
+        <xpath expr="//t[@t-call='web.frontend_layout']/t[last()]" position="after">
+            <t t-set="body_classname" t-value="'login_background'"/>
+        </xpath>
+        <xpath expr="//div[@t-if='not disable_footer']/a" position="replace">
+        	
+        </xpath>
+        <xpath expr="//t[@t-if='not disable_database_manager']/a" position="replace">
+            <a class="pr-2 mr-1" href="/web/database/manager">Manage Databases</a>
+        </xpath>
+    </template>
+
+    <template id="web_login_extended" inherit_id="web.login" name="Login">
+    	<xpath expr="//t[@t-if='debug']" position="replace">
+
+    	</xpath>
+        
+    </template>
+</odoo>

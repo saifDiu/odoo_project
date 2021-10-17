@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_stockpicking" model="ir.actions.report">
+            <field name="name">Delivery Note</field>
+            <field name="model">stock.picking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">wt_stock_picking_report.report_stockpicking</field>
+            <field name="report_file">wt_stock_picking_report.report_stockpicking</field>
+            <field name="print_report_name">'Delivery Note  - %s - %s' % (object.origin, object.name)</field>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<template inherit_id="sale.report_invoice_document_inherit_sale" id="report_invoice_document_inherit_sale_extended">
+		<xpath expr="//t[@t-if='o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)']" position='replace'>
+			<t t-if="o.partner_shipping_id">
+                <t t-set="information_block">
+                    <div groups="sale.group_delivery_invoice_address" name="shipping_address_block">
+                        <strong>Shipping Address:</strong>
+                        <div t-field="o.partner_shipping_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                    </div>
+                </t>
+            </t>
+		</xpath>
+	</template>
+	
+	<template inherit_id="account.report_invoice_document" id="invoice_report_extended">
+		<xpath expr="//div[@name='due_date']" position="after">
+			<div class="col-auto col-3 mw-100 mb-2" t-if="o.project_id">
+                <strong>Project:</strong>
+                <p class="m-0" t-field="o.project_id"/>
+            </div>
+		</xpath>
+
+		<xpath expr="//th[5]" position="replace">
+			<th t-if="not o.partner_vat_to_hmrc" name="th_taxes" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Taxes</span></th>
+		</xpath>
+
+		<xpath expr="//td[5]" position="replace">
+            <td t-if="not o.partner_vat_to_hmrc" t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
+            </td>
+		</xpath>
+
+		<xpath expr="//p[@t-if='o.narration']" position='replace'>
+			<t t-if='o.company_id.vat'>
+				<p style='margin-bottom:0px'>VAT: <span t-field="o.company_id.vat"/></p>
+			</t>
+			<t t-if='o.company_id.utr'>
+				<p style='margin-bottom:0px'>UTR: <span t-field="o.company_id.utr"/></p>
+			</t>
+			<br/>
+			<span>Payee Details:</span>
+			<t t-if='o.company_id.vat'>
+				<p style='margin-bottom:0px'>Company: <span t-field="o.company_id.name"/></p>
+			</t>
+			<t t-if='o.company_id.bank_details'>
+				<p style='margin-bottom:0px'>Bank: <span t-field="o.company_id.bank_details"/></p>
+			</t>
+			<t t-if='o.company_id.sort_code'>
+				<p style='margin-bottom:0px'>Sort Code: <span t-field="o.company_id.sort_code"/></p>
+			</t>
+			<t t-if='o.company_id.account_no'>
+				<p>Account No.: <span t-field="o.company_id.account_no"/></p>
+			</t>
+		</xpath>
+
+		<xpath expr="//th[@name='th_price_unit']" position="after">
+            <th t-if="o.partner_vat_to_hmrc"  name="th_vat_tax_ids" class="text-right"><span>VAT</span></th>
+		</xpath>
+
+		<xpath expr="//td[@t-if='display_discount']" position="after">
+			<td t-if="o.partner_vat_to_hmrc" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                <span t-esc="', '.join(map(lambda x: (x.name or x.description), line.vat_tax_ids))" id="line_vat_tax_ids"/>
+            </td>
+		</xpath>
+
+		<xpath expr="//t[@t-foreach='o.amount_by_group']" position="replace">
+            <t t-if="not o.partner_vat_to_hmrc" t-foreach="o.amount_by_group" t-as="amount_by_group">
+                <tr style="">
+                    <t t-if="len(o.line_ids.filtered(lambda line: line.tax_line_id)) in [0, 1] and o.amount_untaxed == amount_by_group[2]">
+                        <td><span class="text-nowrap" t-esc="amount_by_group[0]"/></td>
+                        <td class="text-right o_price_total">
+                            <span class="text-nowrap" t-esc="amount_by_group[3]" />
+                        </td>
+                    </t>
+                    <t t-else="">
+                        <td>
+                            <span t-esc="amount_by_group[0]"/>
+                            <span class="text-nowrap"> on
+                                <t t-esc="amount_by_group[4]"/>
+                            </span>
+                        </td>
+                        <td class="text-right o_price_total">
+                            <span class="text-nowrap" t-esc="amount_by_group[3]"/>
+                        </td>
+                    </t>
+                </tr>
+            </t>
+
+			<t t-if="o.partner_vat_to_hmrc">
+				<tr style="">
+					<td name="td_amount_by_group_label_3">
+						<span style="padding-right: 15px;position: absolute;right: 21rem;display: inline-block; width: 522px;"> Domestic Reverse Charge: Customer to pay the VAT to HMRC.&amp;nbsp;</span>
+	                   <span><strong>VAT Due</strong></span>
+	                </td>
+	                <td name="td_amount_by_group_3" class="text-right o_price_total">
+	        			<span t-esc="o.vat_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+	                </td>
+            	</tr>
+			</t>
+		</xpath>
+	</template>
+</odoo>

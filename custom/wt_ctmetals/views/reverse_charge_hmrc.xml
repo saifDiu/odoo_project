@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="reverse_charge_view_tree" model="ir.ui.view">
+        <field name="name">Domestic Reverse Charge</field>
+        <field name="model">reverse.charge</field>
+        <field name="arch" type="xml">
+            <tree string="Tags" edit="false">
+                <field name="inv_id"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="charge_amount" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_reverse_charge_form_search" model="ir.ui.view">
+        <field name="name">reverse.charge.search</field>
+        <field name="model">reverse.charge</field>
+        <field name="arch" type="xml">
+            <search string="Domestic Reverse Charge">
+                <field name="partner_id"/>
+                <field name="inv_id"/>
+                <field name="charge_amount"/>
+                <field name="date"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner" name="partner" context="{'group_by':'partner_id'}" help="Partner"/>
+                    <filter string="Invoice" name="inv_id" context="{'group_by':'inv_id'}" help="Invoice"/>
+                    <filter string="DRC Charge Amount" name="charge_amount" context="{'group_by':'charge_amount'}" help="Domestic Reverse Charge"/>
+                    <filter string="Date" name="date" context="{'group_by':'date'}" help="Date"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_reverse_charge_list" model="ir.actions.act_window">
+        <field name="name">Domestic Reverse Charge</field>
+        <field name="res_model">reverse.charge</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="view_reverse_charge_form_search"/>
+    </record>
+
+    <menuitem id="account_hmrc_menu" name="Domestic Reverse Charge" sequence="1" groups="account.group_account_readonly,account.group_account_invoice" 
+         parent="account.menu_finance_reports"/>
+
+    <menuitem id="menu_hmrc_reverse_charge_list"
+        action="action_reverse_charge_list"
+        parent="wt_ctmetals.account_hmrc_menu"
+        name="DRC"
+    />
+
+</odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="res_company_extended" model="ir.ui.view">
+        <field name="name">res.company.extended</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="arch" type="xml">
+	        <field name="favicon" position="after">
+                <field name="navbar_bg_color" widget="color"/>
+                <field name="bg_selection"/>
+                <field name="html_color" widget="color" attrs="{'invisible': ['|',('bg_selection', '=', 'bg_image'),('bg_selection', '=', False)]}"/>
+	        	<field name="background_image" widget='image' class="oe_avatar" attrs="{'invisible': ['|',('bg_selection', '=', 'bg_color'),('bg_selection', '=', False)]}"/>
+	        </field>
+        </field>
+    </record>
+</odoo>

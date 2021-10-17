@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <record id="res_config_settings_view_form_inherit" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="100"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Debranding" string="Debranding Settings" data-key="wt_backend_debrand">
+                    <div class="row mt16 o_settings_container" id="debranding_config">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Favicon By Icon</span>
+                                        <div class="text-muted">
+                                            New favicon
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16 row">
+                                                <label for="wt_favicon" string="Favicon" class="col-xs-3 col-md-3 o_light_label"/>
+                                                <field name="wt_favicon" widget="image" required="1" width="100px"/>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Replace By Title</span>
+                                        <div class="text-muted">
+                                            New title
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16 row">
+                                                <label for="r_title" string="Title" class="col-xs-3 col-md-3 o_light_label"/>
+                                                <field name="r_title" required="1"/>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row mt16 o_settings_container" id="debranding_config">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Replace By Text</span>
+                                    <div class="text-muted">
+                                        New Text
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="mt16 row">
+                                           <label for="r_text" string="Text" class="col-xs-3 col-md-3 o_light_label"/>
+                                            <field name="r_text" required="1"/>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//div[@id='about']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[@id='iap_portal']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[@name='integration']//div[@id='external_pads_setting']//div[hasclass('text-muted')]" position="replace">
+                <div class="text-muted">
+                    Use external pads in Systems Notes
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='integration']//div[@id='google_spreadsheet_setting']//div[hasclass('text-muted')]" position="replace">
+                <div class="text-muted">
+                    Extract and analyze Systems data from Google Spreadsheet
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

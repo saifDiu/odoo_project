@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template inherit_id="purchase.report_purchaseorder_document" id="purchase_report_extended">
+		<xpath expr="//div[@t-if='o.date_order']//p" position="replace">
+			<p t-esc="o.date_order.date()" class="m-0"/>
+		</xpath>
+		<xpath expr="//span[@t-field='line.date_planned']" position="replace">
+			<span t-esc="line.date_planned.date()"/>
+		</xpath>
+		<xpath expr="//div[@t-if='o.date_order']" position="after">
+			<div t-if="o.project_id" class="col-3 bm-2">
+				<strong>Project:</strong>
+	            <p t-field="o.project_id" class="m-0"/>
+	        </div>
+		</xpath>
+	</template>
+
+	<template inherit_id="purchase.report_purchasequotation_document" id="purchasequotation_report_extended">
+		<!-- <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+			<attribute name="t-call">wt_ctmetals.external_layout_purchase_rfq</attribute>
+		</xpath> -->
+		<xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+        	<attribute name="t-call">wt_ctmetals.external_layout_purchase_rfq</attribute>
+    	</xpath>
+		<xpath expr="//h2" position="after">
+			<span t-if="o.project_id">
+				<strong>Project:</strong>
+	            <span t-field="o.project_id" class="m-0"/>
+	        </span>
+		</xpath>
+	</template>
+</odoo>

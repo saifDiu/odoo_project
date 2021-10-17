@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template inherit_id="web.address_layout" id="wt_address_layout">
+        <xpath expr="//t[@t-if='information_block']" position="replace">
+            <t t-if="information_block">
+                <t t-set="colclass" t-value="'col-5'"/>
+                <div name="information_block" class="col-6">
+                    <t t-raw="information_block"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_menu_planning" name="Portal layout : planning menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <t t-if="request.env.user.has_group('wt_ctmetals.group_is_delivery_boy')">
+                <li t-if="page_name == 'delivery'" class="breadcrumb-item active">
+                    <a t-if="sale_order" t-attf-href="/my/planning?{{ keep_query() }}">Delivery</a>
+                    <t>Delivery</t>
+                </li>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_layout_extended" inherit_id="portal.portal_layout">
+        <xpath expr="//div[@id='wrap']/div[1]" position="attributes">
+            <attribute name="class">m-4</attribute>
+        </xpath>
+    </template>
+
+    <template id="wt_signature" name="Ask Signature">
+        <div t-att-class="'wt_signature_form'"
+            t-att-data-res-model="object._name"
+            t-att-data-res-id="object.id"
+            t-att-data-sign-label="signLabel"/>
+    </template>
+
+    <template id="delivery_templ" name="Delivery">
+        <t t-call="portal.portal_layout">
+            <div class="ctmetals-main-cl" t-if="request.env.user.has_group('wt_ctmetals.group_is_delivery_boy')">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <h1 class="text-center header-cl">Delivery Note</h1>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Delivery Note</t>
+                </t>
+
+                <t t-if="not delivery">
+                    <p>There are currently no Delivery Slot for your account.</p>
+                </t>
+
+                <t t-if="delivery" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th class="text-left">
+                                Name
+                            </th>
+                            <th class="text-center">
+                                From
+                            </th>
+                            <th class="text-center">
+                                Address
+                            </th>
+                            <th class="text-center">
+                                Responsible
+                            </th>
+                            <th class="text-center">
+                                Info
+                            </th>
+                            <th class="text-center">
+                                Delivery Note
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <t t-foreach="delivery" t-as="picking">
+                            <tr class="tr-body-cl">
+                                <td class="text-left">
+                                    <t t-esc="picking.name"/>
+                                </td>
+                                <td class="text-center">
+                                    <t t-esc="picking.location_id.location_id.name"/>/<t t-esc="picking.location_id.name"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="picking.partner_id.name"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="picking.user_id.name"/>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                    <button type="button" class="info-button bg-white" id="btnShowPopup"  data-toggle="modal" t-attf-data-target="#MyPopup_#{picking.id}">
+                                        <i class="fa fa-info-circle"/>
+                                    </button>
+                                    </div>
+                                    <div t-attf-id="MyPopup_#{picking.id}" class="move_line_popup modal fade" role="dialog">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        &amp;times;</button>
+                                                </div>
+                                                <div class="modal-body d-flex">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr style="text-align:start;">
+                                                                <th scope="col">
+                                                                    Product
+                                                                </th>
+                                                                <th scope="col">
+                                                                    Demand
+                                                                </th>
+                                                                <th scope="col">
+                                                                    Receive
+                                                                </th>
+                                                                <th scope="col">
+                                                                    Done
+                                                                </th>
+                                                                <th scope="col">
+                                                                    Unit of Measure
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody name="del" data-init="1">
+                                                            <tr class="delivery-data" style="text-align:start;" t-foreach="picking.move_ids_without_package" t-as="line">
+                                                                <td scope="row">
+                                                                    <t t-esc="line.product_id.name" />
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="line.product_uom_qty" />
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="line.forecast_availability" />
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="line.quantity_done" />
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="line.product_uom.name" />
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                    <button type="button" class="delivery-note bg-white" id="btnreport" data-toggle="modal" t-attf-data-target=".report-popup_#{picking.id}">
+                                        <i class="fa fa-truck"/>
+                                    </button>
+                                    </div>
+                                    <t t-call="wt_ctmetals.delivery_report_tmpl"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </t>
+            </div>
+            <div t-else="else">
+                <div id="notfound">
+                    <div class="notfound">
+                        <div class="notfound-404">
+                            <h1>Oops!</h1>
+                            <h2>404 - The Page can't be found</h2>
+                        </div>
+                        <a href="/">Go TO Homepage</a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="delivery_report_tmpl">
+        <div id="MyPopup_report" t-attf-class="modal fade report-popup_#{picking.id}" role="dialog">
+            <div class="modal-dialog modal-xl" style="min-width: 75%;">
+                <div class="modal-content">
+                    <t t-call="web.external_layout">
+                        <t t-set="picking" t-value="picking.with_context(lang=picking.partner_id.lang)"/>
+                        <div class="modal-body">
+                            <t t-set="address">
+                                <strong>Billing Address:</strong>
+                                <div t-field="picking.billinhg_partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+                            </t>
+
+                            <t t-set="information_block">
+                                <strong>Shipping Address:</strong>
+                                <div t-field="picking.order_id.partner_shipping_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+                            </t>
+
+                            <br/>
+                            <h2>
+                                <span>Delivery</span>
+                                <span t-if="picking.name != '/'" t-field="picking.name"/>
+                            </h2>
+                            <br/>
+                            <div id="informations" class="row mt32 mb32">
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.scheduled_date" name="scheduled_date">
+                                    <strong>Schedule Date:</strong>
+                                    <p class="m-0" t-field="picking.scheduled_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.date_done" name="date_done">
+                                    <strong>Effective Date:</strong>
+                                    <p class="m-0" t-field="picking.date_done" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.origin" name="origin">
+                                    <strong>Source:</strong>
+                                    <p class="m-0" t-field="picking.origin"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.project_id_ct" name="project_id">
+                                    <strong>Project:</strong>
+                                    <p class="m-0" t-field="picking.project_id_ct"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.customer_ref" name="customer_ref">
+                                    <strong>Reference:</strong>
+                                    <p class="m-0" t-field="picking.customer_ref"/>
+                                </div>
+                            </div>
+
+                            <div id="imp_informations" class="row mt32 mb32">
+
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.origin" name="origin">
+                                    <strong>Site Contact:</strong>
+                                    <p class="m-0" t-field="picking.order_id.partner_shipping_id.name"/>
+                                </div>
+
+                                <div class="col-auto col-3 mw-100 mb-2" t-if="picking.partner_id.mobile" name="contact_no">
+                                    <strong>Mobile Number:</strong>
+                                    <p class="m-0" t-field="picking.partner_id.mobile"/>
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" name="contact_12">
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" name="contact_1234">
+                                </div>
+                                <div class="col-auto col-3 mw-100 mb-2" name="contact_12345">
+                                </div>
+                            </div>
+
+                            <table class="table table-sm o_main_table mt-4">
+                                <thead style="display: table-row-group">
+                                    <tr style="border:1px solid #dee2e6">
+                                        <th name="th_quantity" class="text-left">Description</th>
+                                        <th name="th_description" class="text-right">Dispatched</th>
+                                        <th name="th_priceunit" class="text-right">Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-foreach="picking.sale_id.order_line" t-if="picking.sale_id" t-as="s_line"> 
+                                        <tr>
+                                            <td name="td_name" t-if="s_line.product_id" class="text-left">
+                                                <span t-esc="s_line.product_id.name" t-if="s_line.product_id"/>
+                                            </td>
+                                            <t t-if="s_line.display_type == 'line_section'">
+                                                <td name="td_section_line" colspan="99">
+                                                    <span t-esc="s_line.name"/>
+                                                </td>
+                                                <t t-set="current_section" t-value="s_line"/>
+                                                <t t-set="current_subtotal" t-value="0"/>
+                                            </t>
+                                            <t t-if="s_line.display_type == 'line_note'">
+                                                <td name="td_note_line" colspan="99">
+                                                    <span t-esc="s_line.name"/>
+                                                </td>
+                                            </t>
+                                            <td name="td_quantity_done" class="text-right">
+                                                <span t-esc="s_line.qty_delivered" t-if="s_line.product_id"/>
+                                            </td>
+                                            <td name="td_quantity_remain" class="text-right">
+                                                <span t-esc="s_line.product_uom_qty - s_line.qty_delivered" t-if="s_line.product_id"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="picking.purchase_id" t-foreach="picking.purchase_id.order_line" t-as="p_line">
+
+                                        <tr>
+                                            <td name="td_name" class="text-left">
+                                                <span t-esc="p_line.product_id.name" t-if="p_line.product_id"/>
+                                                <span t-esc="p_line.name" t-else="else"/>
+                                                <br/>
+                                                <span t-esc="picking.note"/>
+                                            </td>
+                                            <td name="td_quantity_done" class="text-right">
+                                                <span t-esc="p_line.qty_received" t-if="p_line.product_id"/>
+                                            </td>
+                                            <td name="td_quantity_remain" class="text-right">
+                                                <span t-esc="p_line.product_uom_qty - p_line.qty_received" t-if="p_line.product_id"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-else="else" t-foreach="picking.move_ids_without_package" t-as="line">
+                                        <tr>
+                                            <td name="td_name" class="text-left">
+                                                <span t-esc="line.product_id.name"/>
+                                                <br/>
+                                                <span t-esc="picking.note"/>
+                                            </td>
+                                            <td name="td_quantity_done" class="text-right">
+                                                <span t-esc="line.qty_delivered"/>
+                                            </td>
+                                            <td name="td_quantity_remain" class="text-right">
+                                                <span t-esc="line.product_uom_qty - line.qty_delivered"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <form action="/delivery" method="post" class="s_website_form container-fluid mt32" enctype="multipart/form-data" data-editable-form="false">
+
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="picking_id" id="picking_id" t-att-value="picking.id"/>
+                                <div class="row">                            
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <strong>Delivered By</strong>
+                                            </div>
+                                            <div class="col-md-6" style="border-bottom:1px solid">
+                                                <span t-esc="picking.user_id.name"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <strong>Delivery date</strong>
+                                            </div>
+                                            <div class="col-md-6" style="border-bottom:1px solid">
+                                                <span t-esc="datetime.date.today()"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <strong>Delivered Time</strong>
+                                            </div>
+                                            <div class="col-md-6" style="border-bottom:1px solid">
+                                                <span t-esc="datetime.datetime.now().time().strftime('%H:%M:%S')"/>
+                                            </div>
+                                        </div>
+                                        <div class="row radio_group_cl">
+                                            <div class="col-md-4">
+                                                <strong>All goods received</strong>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="radio" id="yes" class="goods" name="received" value="Yes"/>
+                                                <label for="yes">Yes</label>
+                                                <input type="radio" class="goods" id="no" name="received" value="No"/>
+                                                <label for="css">No</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <strong>Received by</strong>
+                                            </div>
+                                            <div class="col-md-6" style="border-bottom:1px solid">
+                                                <input type="text" name="receive_by" id="receive_by" class="border-0 bg-transparent"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 annotation_cl">
+                                        <fieldset>
+                                            <legend style="text-align: left;margin-top:-15px;">Annotation</legend>
+                                            <textarea id="annotation" name="annotation" rows="4" cols="5"></textarea>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <t t-call="wt_ctmetals.wt_signature">
+                                            <t t-set="object" t-value="picking"/>
+                                            <!-- <t t-set="callUrl" t-value="'/wt/data/signature'"/> -->
+                                            <!-- <t t-set="prevUrl" t-value="'/ctmetals/second/form/fill'"/> -->
+                                        </t>
+                                        <input type="hidden" id="signature" name="signature"/>
+                                    </div>
+
+                                    <div class="col-md-6 img" id="web_cam_block">
+                                        <div id="camBox" class="position-relative d-none">
+                                            <div class="revdivshowimg">
+
+                                                <div id="camera" style="height:auto;text-align:center;margin:0 auto;"></div>
+                                                <p class="text-center">
+                                                    <button type="button" class="btn-success" value="Ok" id="btAddPicture">OK</button> 
+                                                    <button type="button" class="btn-danger" id="cancel" value="Cancel">Cancel</button>
+                                                </p>
+                                                <input type="hidden" id="rowid" />
+                                                <input type="hidden" id="dataurl" />
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-2" id="myweb">
+                                            <table id="myTable">
+                                                <tbody class="d-flex">
+                                                    <tr>
+                                                        <td>
+                                                            <div id="div_alpha">
+                                                                
+                                                            </div>
+                                                            <div id="image_div_alpha" class="d-none"></div>
+                                                            <button type="button" value="alpha" class="button_cl" id="alpha">Take a SnapShot</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div id="div_bravo"></div>
+                                                            <div id="image_div_bravo" class="d-none"></div>
+                                                            <button type="button" value="bravo" class="button_cl" id="bravo">Take a SnapShot</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div id="div_charlie"></div>
+                                                            <div id="image_div_charlie" class="d-none"></div>
+                                                            <button type="button" value="charlie" class="button_cl" id="charlie">Take a SnapShot</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn-success submit btn btn-primary o_portal_sign_submit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>
+

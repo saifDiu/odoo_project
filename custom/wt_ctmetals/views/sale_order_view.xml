@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new quotation, the first step of a new sale!
+              </p><p>
+                Once the quotation is confirmed by the customer, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+              </p>
+            </field>
+        </record>
+
+
+    <record id="sale_order_form_view_extended" model="ir.ui.view">
+        <field name="name">sale.order.form.view.extended</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_title']/h1" position="after">
+                <field name="is_credit_limit_exceeded" invisible="1"/>
+
+                <p attrs="{'invisible':[('is_credit_limit_exceeded', '!=', True)]}" style="color:red;">customer credit limit has exceeded.</p>
+            </xpath>
+
+            <xpath expr="//field[@name='client_order_ref']" position="replace">
+            </xpath>
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name='domain'>[('customer_rank','&gt;','0')]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                <field name="project_id"/>
+                <field name='client_order_ref'/>
+            </xpath>
+
+            <xpath expr="//field[@name='amount_untaxed']" position="attributes">
+                <attribute name="string">Subtotal</attribute>
+            </xpath>
+
+
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="partner_vat_to_hmrc" invisible="1"/>
+            </xpath>
+          
+            <xpath expr="//field[@name='amount_untaxed']" position="after">
+                <field name='vat_tax' attrs="{'invisible':[('partner_vat_to_hmrc', '!=', True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='amount_tax']" position="attributes">
+                <attribute name="attrs">{'invisible':[('partner_vat_to_hmrc', '==', True)]}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']//tree//field[@name='tax_id']" position="after">
+                <field name="vat_tax_ids" widget="many2many_tags" optional="show" attrs="{'column_invisible':[('parent.partner_vat_to_hmrc', '!=', True)]}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']//tree//field[@name='tax_id']" position="attributes">
+                <attribute name="attrs">{'column_invisible':[('parent.partner_vat_to_hmrc', '==', True)]}</attribute>
+            </xpath>
+
+            <xpath expr="//header//button[@states='sent,sale']" position="replace">
+                <button name="action_quotation_send" string="Send by Email" type="object" states="sent,sale" class="btn-primary" context="{'proforma': False}"/>
+            </xpath>
+
+            <xpath expr="//header//button[@states='draft']" position="replace">
+                <button name="action_quotation_send" string="Send by Email" type="object" states="draft" class="btn-primary" context="{'proforma': False}"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

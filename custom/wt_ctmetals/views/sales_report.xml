@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template inherit_id="sale.report_saleorder_document" id="saleorder_report_extended">
+		 <!-- <t t-set="address"> -->
+		 <xpath expr="//t[@t-set='address']" position="replace">
+		 	<t t-set="address">
+				<t>
+                    <strong>Invoice Address:</strong>
+	 			<div t-field="doc.partner_invoice_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+                </t>
+        	</t>
+		 </xpath>
+
+	 	<xpath expr="//t[@t-call='web.external_layout']/t[3]" position="replace">
+	 		<t t-set="information_block">
+
+	 			<strong>Shipping Address:</strong>
+                    <div t-field="doc.partner_shipping_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+	 			
+	 		</t>
+	 	</xpath>
+
+		<xpath expr="//div[@t-if='doc.user_id.name']" position="after">
+			<div t-if="doc.project_id" class="col-auto col-3 mw-100 mb-2">
+				<strong>Project:</strong>
+	            <p class="m-0" t-field="doc.project_id"/>
+	        </div>
+		</xpath>
+
+		<!-- <xpath expr="//th[@name='th_taxes']" position="replace">
+            <th t-if="not doc.partner_vat_to_hmrc" name="th_taxes" class="text-right">Taxes</th>
+		</xpath> -->
+
+		<xpath expr="//th[@name='th_taxes']" position="replace">
+			<th name="th_vat_tax_ids" class="text-left">VAT</th>
+		</xpath>
+
+		<xpath expr="//td[@name='td_taxes']" position="after">
+			<td t-if="doc.partner_vat_to_hmrc" name="td_vat_tax_ids" class="text-left">
+                <span t-esc="', '.join(map(lambda x: (x.name or x.description), line.vat_tax_ids))"/>
+			</td>
+		</xpath>
+
+		<xpath expr="//td[@name='td_taxes']" position="replace">
+			<td t-if="not doc.partner_vat_to_hmrc" name="td_taxes" class="text-right">
+                <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+            </td>
+		</xpath>
+
+		<xpath expr="//t[@t-foreach='doc.amount_by_group']" position="replace">
+			<t t-if="not doc.partner_vat_to_hmrc" t-foreach="doc.amount_by_group" t-as="amount_by_group">
+                <tr style="">
+                    <t t-if="amount_by_group[5] == 1 and doc.amount_untaxed == amount_by_group[2]">
+                        <td name="td_amount_by_group_label_3">
+                            <span t-esc="amount_by_group[0]"/>
+                            <span>&amp;nbsp;<span>on</span>&amp;nbsp;<t t-esc="amount_by_group[2]" t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/></span>
+                        </td>
+                        <td name="td_amount_by_group_3" class="text-right o_price_total">
+                            <span t-esc="amount_by_group[1]"
+                                t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+                        </td>
+                    </t>
+                    <t t-else ="">
+                        <td name="td_amount_by_group_label">
+                            <span t-esc="amount_by_group[0]"/>
+                        </td>
+                        <td name="td_amount_by_group" class="text-right o_price_total">
+                            <span t-esc="amount_by_group[1]"
+                                t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+                        </td>
+                    </t>
+                </tr>
+            </t>
+			<t t-if="doc.partner_vat_to_hmrc">
+				<tr style="">
+					<td name="td_amount_by_group_label_3">
+						<span style="padding-right: 15px;position: absolute;right: 16rem;display: inline-block; width: 522px;"> Domestic Reverse Charge: Customer to pay the VAT to HMRC.&amp;nbsp;</span>
+	                   <span><strong>VAT Due</strong></span>
+	                </td>
+	                <td name="td_amount_by_group_3" class="text-right o_price_total">
+	        			<span t-esc="doc.vat_tax" t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+	                </td>
+            	</tr>
+			</t>
+		</xpath>
+
+		<xpath expr="//p[@id='fiscal_position_remark']" position='after'>
+			<t t-if="env.context.get('proforma', False) or is_pro_forma">
+				<t t-if='doc.company_id.vat'>
+					<p style='margin-bottom:0px'>VAT: <span t-field="doc.company_id.vat"/></p>
+				</t>
+				<t t-if='doc.company_id.utr'>
+					<p style='margin-bottom:0px'>UTR: <span t-field="doc.company_id.utr"/></p>
+				</t>
+				<br/>
+				<span>Payee Details:</span>
+				<t t-if='doc.company_id.vat'>
+					<p style='margin-bottom:0px'>Company: <span t-field="doc.company_id.name"/></p>
+				</t>
+				<t t-if='doc.company_id.bank_details'>
+					<p style='margin-bottom:0px'>Bank: <span t-field="doc.company_id.bank_details"/></p>
+				</t>
+				<t t-if='doc.company_id.sort_code'>
+					<p style='margin-bottom:0px'>Sort Code: <span t-field="doc.company_id.sort_code"/></p>
+				</t>
+				<t t-if='doc.company_id.account_no'>
+					<p>Account No.: <span t-field="doc.company_id.account_no"/></p>
+				</t>
+			</t>
+		</xpath>
+
+	</template>
+</odoo>

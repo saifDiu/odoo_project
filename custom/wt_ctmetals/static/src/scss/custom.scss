@@ -1,0 +1,229 @@
+.ctmetals-main-cl{
+
+	textarea, input:focus{
+		outline: none !important;
+		box-shadow: none !important;
+	}
+	button:focus, button:hover, button:active{
+		// background-color: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+		outline: none;
+	}
+	
+	.delivery-note:hover{
+		background-color: transparent !important;
+	}
+	.delivery-note:focus{
+		background-color: transparent !important;
+	}
+	.info-button:hover{
+		background-color: transparent !important;		
+	}
+	.info-button:focus{
+		background-color: transparent !important;		
+	}
+
+	.header-cl{
+		font-size: 30px; 
+		font-weight: bold; 
+		color: #e92822; 
+		margin-top: -10px; 
+		margin-bottom: -10px;
+	}
+
+	thead{
+		tr{
+			color:#3a3b3c;
+		}
+	}
+
+	#clear-signature{
+		color: #fff; 
+		height: 37px;
+		width: 110px;
+		font-weight: 700;
+		background-color: #313231;
+	}
+	#signature{
+		width: 450px;
+		height: 150px; 
+		border: 1px solid #ddd;
+	}
+
+	.submit{
+		width:15%;
+		height: 40px;
+		color: #fff;
+		font-weight: 700;
+		text-transform:uppercase;
+		margin-top: 5px;
+	}
+
+	.tr-body-cl{
+		td{
+			font-weight: bold; 
+		}
+		button{
+    		border: none;
+		}
+		button:focus{
+			outline: none;
+		}
+	}
+	.move_line_popup{
+		.modal-content{
+			max-height: min-content;
+			min-height: fit-content;
+			.modal-header{
+				padding: 0.5rem 0.5rem;
+				border-bottom: none;
+				button{
+					text-align: end;
+				}
+
+				.close, .close:focus{
+					color: #eb5555;
+					outline: none;
+				}
+			}
+		}
+	}
+
+
+	#MyPopup_report{
+		.modal-content{
+			padding-top: 18px;
+			max-height: min-content;
+			min-height: fit-content;
+			background-image: url(/wt_ctmetals/static/src/img/bg_background_template.jpg);
+			background-size: cover;
+    		background-repeat: no-repeat;
+    		.o_report_layout_background{
+    			margin-left: 7mm;
+    			margin-right: 7mm;
+
+    			.address{
+    				padding: 1rem;
+    			}
+    		}
+    		.o_company_1_layout{
+    			margin-left: 7mm;
+    			margin-right: 7mm;
+    		}
+			.o_company_1_layout{
+				margin-left: 7mm;
+		    	margin-right: 7mm;
+		    	font-weight: 500;
+		    	padding: 0px;
+		    	.o_background_header{
+		    		padding: 1rem;
+		    	}
+			}
+
+			@media (max-width: 572px){
+				.address{
+					display: block;
+					margin: 0 !important;
+				}
+			}
+		}
+
+		.annotation_cl{
+			padding:6px;
+			fieldset{
+				border:1px solid;
+				border-radius:8px;
+				box-shadow:0 0 8px #999;
+				padding:6px;
+			}
+			textarea{
+				width: 100%;
+				height: 100%;
+				border: none;
+				background: transparent;
+			}
+		}
+	}
+	#img-canvas {
+	  border: 2px dotted #CCCCCC;
+	  border-radius: 15px;
+	  cursor: crosshair;
+	  max-width: 1000px;
+	}
+
+	input:focus{
+		outline: 0;
+	}
+}
+
+#web_cam_block{
+	table, input {
+        width: auto;
+        font: 15px Calibri;
+    }
+    table, th, td, th {
+        border: solid 1px #DDD;
+        border-collapse: collapse;
+        padding: 2px 3px;
+        text-align: center;
+        font-weight: normal;
+    }
+    #camBox{
+        position:fixed;
+        border:0;
+        top:0;
+        right:0;
+        left:0;
+        overflow-x:auto;
+        overflow-y:hidden;
+        z-index:9999;
+        background-color:rgba(239,239,239,.9);
+        width: fit-content;
+		height: fit-content;
+        text-align:center;
+        cursor:pointer;
+        -webkit-box-align:center;-webkit-box-orient:vertical;
+        -webkit-box-pack:center;-webkit-transition:.2s opacity;
+        -webkit-perspective:1000;
+
+        .revdivshowimg{
+        	text-align:center;
+        	margin:0 auto;
+	        width:300px;
+	        top:0;
+	        padding:0;
+	        position:relative;
+	        margin:0 auto;
+	        display:block;
+	        background-color:#fff;
+	        webkit-box-shadow:6px 0 10px rgba(0,0,0,.2),-6px 0 10px rgba(0,0,0,.2);
+	        -moz-box-shadow:6px 0 10px rgba(0,0,0,.2),-6px 0 10px rgba(0,0,0,.2);
+	        box-shadow:6px 0 10px rgba(0,0,0,.2),-6px 0 10px rgba(0,0,0,.2);
+	        overflow:hidden;
+	        border-radius:3px;
+	        color:#17293c
+	        #camera{
+	        	height:auto;
+	        	text-align:center;
+	        	margin:0 auto;
+	        }
+
+	        #btAddPicture{
+	        	width: 30%;
+	        	height:30px;
+	        	color:#fff;
+	        	font-weight:700;
+	        }
+	        #cancel{
+	        	width: 30%;
+	        	height: 30px;
+	        	color:#fff;
+	        	font-weight: 700;
+	        }
+	    }     	
+    } 
+    #myweb{
+    	width:300px;
+    }  
+}

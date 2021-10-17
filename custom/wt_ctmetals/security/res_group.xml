@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+
+	    <record model="ir.module.category" id="module_category_ctmetals">
+	        <field name="name">Ctmetals</field>
+	        <field name="sequence">16</field>
+	    </record>
+
+	    <record id="group_is_delivery_boy" model="res.groups">
+	        <field name="name">Delivery Boy</field>
+	        <field name="category_id" ref="wt_ctmetals.module_category_ctmetals"/>
+	    </record>
+
+	    <record id="group_is_eligible_to_confirm_so" model="res.groups">
+		    <field name="name">Confirm/SaleOrder</field>
+		    <field name="category_id" ref="base.module_category_hidden"/>
+		</record>
+
+	</data>
+</odoo>
